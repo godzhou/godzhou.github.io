@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="学习之余，记录生活"><title>Springboot：Spring Data Jpa的使用 | 满川风雨看潮生</title><link rel="stylesheet" type="text/css" href="//fonts.neworld.org/css?family=Source+Code+Pro"><link rel="stylesheet" type="text/css" href="/css/style.css?v=2.0.1"><link rel="stylesheet" type="text/css" href="/css/highlight.css?v=2.0.1"><link rel="Shortcut Icon" href="/favicon.ico"><link rel="bookmark" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Springboot：Spring Data Jpa的使用</h1><a id="logo" href="/.">满川风雨看潮生</a><p class="description">Deceive the world</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div><div id="search-form"><div id="result-mask" class="hide"></div><label><input id="search-key" type="text" autocomplete="off" placeholder="Arama"></label><div id="result-wrap" class="hide"><div id="search-result"></div></div><div class="hide"><template id="search-tpl"><div class="item"><a href="/{path}" title="{title}"><div class="title">{title}</div><div class="time">{date}</div><div class="tags">{tags}</div></a></div></template></div></div></div><div id="layout" class="layout-g"><div class="layout-l"><div class="content_container"><div class="post"><h1 class="post-title">Springboot：Spring Data Jpa的使用</h1><div class="post-meta"><a href="/2018/03/13/180313/#comments" class="comment-count"></a><p><span class="date">Mar 13, 2018</span><span><a href="/categories/Spring/" class="category">Spring</a></span><span><i id="busuanzi_container_page_pv"><i id="busuanzi_value_page_pv"></i><i>点击</i></i></span></p></div><div class="post-content"><p>使用spring data jpa 开发时，发现国内对spring boot jpa全面介绍的文章比较少案例也比较零碎，因此写文章总结一下。<br><a id="more"></a></p>
+<h2 id="spring-data-jpa-介绍"><a href="#spring-data-jpa-介绍" class="headerlink" title="spring data jpa 介绍"></a>spring data jpa 介绍</h2><hr>
+<h3 id="首先了解JPA是什么"><a href="#首先了解JPA是什么" class="headerlink" title="首先了解JPA是什么"></a>首先了解JPA是什么</h3><p>JPA(Java Persistence API)是Sun官方提出的Java持久化规范。它为Java开发人员提供了一种对象/关联映射工具来管理Java应用中的关系数据。他的出现主要是为了简化现有的持久化开发工作和整合ORM技术，结束现在Hibernate，TopLink，JDO等ORM框架各自为营的局面。值得注意的是，JPA是在充分吸收了现有Hibernate，TopLink，JDO等ORM框架的基础上发展而来的，具有易于使用，伸缩性强等优点。从目前的开发社区的反应上看，JPA受到了极大的支持和赞扬，其中就包括了Spring与EJB3.0的开发团队。</p>
+<blockquote>
+<p>注意:JPA是一套规范，不是一套产品，那么像Hibernate,TopLink,JDO他们是一套产品，如果说这些产品实现了这个JPA规范，那么我们就可以叫他们为JPA的实现产品。</p>
+</blockquote>
+<h3 id="spring-data-jpa"><a href="#spring-data-jpa" class="headerlink" title="spring data jpa"></a>spring data jpa</h3><p>Spring Data JPA 是 Spring 基于 ORM 框架、JPA 规范的基础上封装的一套JPA应用框架，可使开发者用极简的代码即可实现对数据的访问和操作。它提供了包括增删改查等在内的常用功能，且易于扩展！学习并使用 Spring Data JPA 可以极大提高开发效率！</p>
+<blockquote>
+<p>spring data jpa让我们解脱了DAO层的操作，基本上所有CRUD都可以依赖于它来实现</p>
+</blockquote>
+<h2 id="基本查询"><a href="#基本查询" class="headerlink" title="基本查询"></a>基本查询</h2><hr>
+<p>基本查询也分为两种，一种是spring data默认已经实现，一种是根据查询的方法来自动解析成SQL。</p>
+<h3 id="预先生成方法"><a href="#预先生成方法" class="headerlink" title="预先生成方法"></a>预先生成方法</h3><p>spring data jpa 默认预先生成了一些基本的CURD的方法，例如：增、删、改等等</p>
+<ol>
+<li><p>继承JpaRepository</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public interface UserRepository extends JpaRepository&lt;User, Long&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用默认方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void testBaseQuery() throws Exception &#123;</span><br><span class="line">	User user=new User();</span><br><span class="line">	userRepository.findAll();</span><br><span class="line">	userRepository.findOne(1l);</span><br><span class="line">	userRepository.save(user);</span><br><span class="line">	userRepository.delete(user);</span><br><span class="line">	userRepository.count();</span><br><span class="line">	userRepository.exists(1l);</span><br><span class="line">	// ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>就不解释了根据方法名就能看出意思来</p>
+<h3 id="自定义简单查询"><a href="#自定义简单查询" class="headerlink" title="自定义简单查询"></a>自定义简单查询</h3><p>自定义的简单查询就是根据方法名来自动生成SQL，主要的语法是<code>findXXBy</code>,<code>readAXXBy</code>,<code>queryXXBy</code>,<code>countXXBy</code>, <code>getXXBy</code>后面跟属性名称：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User findByUserName(String userName);</span><br></pre></td></tr></table></figure></p>
+<p>也使用一些加一些关键字<code>And</code>、 <code>Or</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User findByUserNameOrEmail(String username, String email);</span><br></pre></td></tr></table></figure></p>
+<p>修改、删除、统计也是类似语法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Long deleteById(Long id);</span><br><span class="line"></span><br><span class="line">Long countByUserName(String userName)</span><br></pre></td></tr></table></figure></p>
+<p>基本上SQL体系中的关键词都可以使用，例如：<code>LIKE</code>、 <code>IgnoreCase</code>、 <code>OrderBy</code>。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">List&lt;User&gt; findByEmailLike(String email);</span><br><span class="line"></span><br><span class="line">User findByUserNameIgnoreCase(String userName);</span><br><span class="line"></span><br><span class="line">List&lt;User&gt; findByUserNameOrderByEmailDesc(String email);</span><br></pre></td></tr></table></figure></p>
+<p><strong>具体的关键字，使用方法和生产成SQL如下表所示</strong></p>
+<table>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Sample</th>
+<th>JPQL snippet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>And</td>
+<td>findByLastnameAndFirstname</td>
+<td>… where x.lastname = ?1 and x.firstname = ?2</td>
+</tr>
+<tr>
+<td>Or</td>
+<td>findByLastnameOrFirstname</td>
+<td>… where x.lastname = ?1 or x.firstname = ?2</td>
+</tr>
+<tr>
+<td>Is,Equals</td>
+<td>findByFirstnameIs,findByFirstnameEquals</td>
+<td>… where x.firstname = ?1</td>
+</tr>
+<tr>
+<td>Between</td>
+<td>findByStartDateBetween</td>
+<td>… where x.startDate between ?1 and ?2</td>
+</tr>
+<tr>
+<td>LessThan</td>
+<td>findByAgeLessThan</td>
+<td>… where x.age &lt; ?1</td>
+</tr>
+<tr>
+<td>LessThanEqual</td>
+<td>findByAgeLessThanEqual</td>
+<td>… where x.age ⇐ ?1</td>
+</tr>
+<tr>
+<td>GreaterThan</td>
+<td>findByAgeGreaterThan</td>
+<td>… where x.age &gt; ?1</td>
+</tr>
+<tr>
+<td>GreaterThanEqual</td>
+<td>findByAgeGreaterThanEqual</td>
+<td>… where x.age &gt;= ?1</td>
+</tr>
+<tr>
+<td>After</td>
+<td>findByStartDateAfter</td>
+<td>… where x.startDate &gt; ?1</td>
+</tr>
+<tr>
+<td>Before</td>
+<td>findByStartDateBefore</td>
+<td>… where x.startDate &lt; ?1</td>
+</tr>
+<tr>
+<td>IsNull</td>
+<td>findByAgeIsNull</td>
+<td>… where x.age is null</td>
+</tr>
+<tr>
+<td>IsNotNull,NotNull</td>
+<td>findByAge(Is)NotNull</td>
+<td>… where x.age not null</td>
+</tr>
+<tr>
+<td>Like</td>
+<td>findByFirstnameLike</td>
+<td>… where x.firstname like ?1</td>
+</tr>
+<tr>
+<td>NotLike</td>
+<td>findByFirstnameNotLike</td>
+<td>… where x.firstname not like ?1</td>
+</tr>
+<tr>
+<td>StartingWith</td>
+<td>findByFirstnameStartingWith</td>
+<td>… where x.firstname like ?1 (parameter bound with appended %)</td>
+</tr>
+<tr>
+<td>EndingWith</td>
+<td>findByFirstnameEndingWith</td>
+<td>… where x.firstname like ?1 (parameter bound with prepended %)</td>
+</tr>
+<tr>
+<td>Containing</td>
+<td>findByFirstnameContaining</td>
+<td>… where x.firstname like ?1 (parameter bound wrapped in %)</td>
+</tr>
+<tr>
+<td>OrderBy</td>
+<td>findByAgeOrderByLastnameDesc</td>
+<td>… where x.age = ?1 order by x.lastname desc</td>
+</tr>
+<tr>
+<td>Not</td>
+<td>findByLastnameNot</td>
+<td>… where x.lastname &lt;&gt; ?1</td>
+</tr>
+<tr>
+<td>In</td>
+<td>findByAgeIn(Collection ages)</td>
+<td>… where x.age in ?1</td>
+</tr>
+<tr>
+<td>NotIn</td>
+<td>findByAgeNotIn(Collection age)</td>
+<td>… where x.age not in ?1</td>
+</tr>
+<tr>
+<td>TRUE</td>
+<td>findByActiveTrue()</td>
+<td>… where x.active = true</td>
+</tr>
+<tr>
+<td>FALSE</td>
+<td>findByActiveFalse()</td>
+<td>… where x.active = false</td>
+</tr>
+<tr>
+<td>IgnoreCase</td>
+<td>findByFirstnameIgnoreCase</td>
+<td>… where UPPER(x.firstame) = UPPER(?1)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="复杂查询"><a href="#复杂查询" class="headerlink" title="复杂查询"></a>复杂查询</h2><hr>
+<p>在实际的开发中我们需要用到分页、删选、连表等查询的时候就需要特殊的方法或者自定义SQL</p>
+<h3 id="分页查询"><a href="#分页查询" class="headerlink" title="分页查询"></a>分页查询</h3><p>分页查询在实际使用中非常普遍了，spring data jpa已经帮我们实现了分页的功能，在查询的方法中，需要传入参数<code>Pageable</code> ,当查询中有多个参数的时候<code>Pageable</code>建议做为最后一个参数传入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Page&lt;User&gt; findALL(Pageable pageable);</span><br><span class="line"></span><br><span class="line">Page&lt;User&gt; findByUserName(String userName,Pageable pageable);</span><br></pre></td></tr></table></figure></p>
+<p><code>Pageable</code>是spring封装的分页实现类，使用的时候需要传入页数、每页条数和排序规则<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void testPageQuery() throws Exception &#123;</span><br><span class="line">	int page=1,size=10;</span><br><span class="line">	Sort sort = new Sort(Direction.DESC, &quot;id&quot;);</span><br><span class="line">    Pageable pageable = new PageRequest(page, size, sort);</span><br><span class="line">    userRepository.findALL(pageable);</span><br><span class="line">    userRepository.findByUserName(&quot;testName&quot;, pageable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>限制查询</strong><br>有时候我们只需要查询前N个元素，或者支取前一个实体。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">ser findFirstByOrderByLastnameAsc();</span><br><span class="line"></span><br><span class="line">User findTopByOrderByAgeDesc();</span><br><span class="line"></span><br><span class="line">Page&lt;User&gt; queryFirst10ByLastname(String lastname, Pageable pageable);</span><br><span class="line"></span><br><span class="line">List&lt;User&gt; findFirst10ByLastname(String lastname, Sort sort);</span><br><span class="line"></span><br><span class="line">List&lt;User&gt; findTop10ByLastname(String lastname, Pageable pageable);</span><br></pre></td></tr></table></figure></p>
+<h3 id="自定义SQL查询"><a href="#自定义SQL查询" class="headerlink" title="自定义SQL查询"></a>自定义SQL查询</h3><p>其实Spring data 觉大部分的SQL都可以根据方法名定义的方式来实现，但是由于某些原因我们想使用自定义的SQL来查询，spring data也是完美支持的；在SQL的查询方法上面使用<code>@Query</code>注解，如涉及到删除和修改在需要加上<code>@Modifying</code>.也可以根据需要添加 <code>@Transactional</code> 对事物的支持，查询超时的设置等<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Modifying</span><br><span class="line">@Query(&quot;update User u set u.userName = ?1 where u.id = ?2&quot;)</span><br><span class="line">int modifyByIdAndUserId(String  userName, Long id);</span><br><span class="line"></span><br><span class="line">@Transactional</span><br><span class="line">@Modifying</span><br><span class="line">@Query(&quot;delete from User where id = ?1&quot;)</span><br><span class="line">void deleteByUserId(Long id);</span><br><span class="line"></span><br><span class="line">@Transactional(timeout = 10)</span><br><span class="line">@Query(&quot;select u from User u where u.emailAddress = ?1&quot;)</span><br><span class="line">    User findByEmailAddress(String emailAddress);</span><br></pre></td></tr></table></figure></p>
+<h3 id="多表查询"><a href="#多表查询" class="headerlink" title="多表查询"></a>多表查询</h3><p>多表查询在spring data jpa中有两种实现方式，第一种是利用hibernate的级联查询来实现，第二种是创建一个结果集的接口来接收连表查询后的结果，这里主要第二种方式。</p>
+<p>首先需要定义一个结果集的接口类。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public interface HotelSummary &#123;</span><br><span class="line"></span><br><span class="line">	City getCity();</span><br><span class="line"></span><br><span class="line">	String getName();</span><br><span class="line"></span><br><span class="line">	Double getAverageRating();</span><br><span class="line"></span><br><span class="line">	default Integer getAverageRatingRounded() &#123;</span><br><span class="line">		return getAverageRating() == null ? null : (int) Math.round(getAverageRating());</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>查询的方法返回类型设置为新创建的接口<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@Query(&quot;select h.city as city, h.name as name, avg(r.rating) as averageRating &quot;</span><br><span class="line">		- &quot;from Hotel h left outer join h.reviews r where h.city = ?1 group by h&quot;)</span><br><span class="line">Page&lt;HotelSummary&gt; findByCity(City city, Pageable pageable);</span><br><span class="line"></span><br><span class="line">@Query(&quot;select h.name as name, avg(r.rating) as averageRating &quot;</span><br><span class="line">		- &quot;from Hotel h left outer join h.reviews r  group by h&quot;)</span><br><span class="line">Page&lt;HotelSummary&gt; findByCity(Pageable pageable);</span><br></pre></td></tr></table></figure></p>
+<p>使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Page&lt;HotelSummary&gt; hotels = this.hotelRepository.findByCity(new PageRequest(0, 10, Direction.ASC, &quot;name&quot;));</span><br><span class="line">for(HotelSummary summay:hotels)&#123;</span><br><span class="line">		System.out.println(&quot;Name&quot; +summay.getName());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在运行中Spring会给接口（HotelSummary）自动生产一个代理类来接收返回的结果，代码汇总使用getXX的形式来获取</p>
+</blockquote>
+<h2 id="多数据源的支持"><a href="#多数据源的支持" class="headerlink" title="##多数据源的支持"></a>##多数据源的支持</h2><h3 id="同源数据库的多元支持"><a href="#同源数据库的多元支持" class="headerlink" title="同源数据库的多元支持"></a>同源数据库的多元支持</h3><p>日常项目中因为使用的分布式开发模式，不同的服务有不同的数据源，常常需要在一个项目中使用多个数据源，因此需要配置sping data jpa对多数据源的使用，一般分一下为三步：</p>
+<ul>
+<li>1 配置多数据源</li>
+<li>2 不同源的实体类放入不同包路径</li>
+<li>3 声明不同的包路径下使用不同的数据源、事务支持</li>
+</ul>
+<p>这里有一篇文章写的很清楚：<a href="https://www.jianshu.com/p/34730e595a8c" target="_blank" rel="noopener">Spring Boot多数据源配置与使用</a></p>
+<h3 id="异构数据库多源支持"><a href="#异构数据库多源支持" class="headerlink" title="异构数据库多源支持"></a>异构数据库多源支持</h3><p>比如我们的项目中，即需要对mysql的支持，也需要对mongodb的查询等。</p>
+<p>实体类声明<code>@Entity</code> 关系型数据库支持类型、声明<code>@Document</code> 为mongodb支持类型，不同的数据源使用不同的实体就可以了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">interface PersonRepository extends Repository&lt;Person, Long&gt; &#123;</span><br><span class="line"> …</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Entity</span><br><span class="line">public class Person &#123;</span><br><span class="line">  …</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">interface UserRepository extends Repository&lt;User, Long&gt; &#123;</span><br><span class="line"> …</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Document</span><br><span class="line">public class User &#123;</span><br><span class="line">  …</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但是，如果User用户既使用mysql也使用mongodb呢，也可以做混合使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">interface JpaPersonRepository extends Repository&lt;Person, Long&gt; &#123;</span><br><span class="line"> …</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">interface MongoDBPersonRepository extends Repository&lt;Person, Long&gt; &#123;</span><br><span class="line"> …</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Entity</span><br><span class="line">@Document</span><br><span class="line">public class Person &#123;</span><br><span class="line">  …</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>也可以通过对不同的包路径进行声明，比如A包路径下使用mysql,B包路径下使用mongoDB<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@EnableJpaRepositories(basePackages = &quot;com.neo.repositories.jpa&quot;)</span><br><span class="line">@EnableMongoRepositories(basePackages = &quot;com.neo.repositories.mongo&quot;)</span><br><span class="line">interface Configuration &#123; &#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><hr>
+<p><strong>使用枚举</strong></p>
+<p>使用枚举的时候，我们希望数据库中存储的是枚举对应的String类型，而不是枚举的索引值，需要在属性上面添加    <code>@Enumerated(EnumType.STRING)</code>注解<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@Enumerated(EnumType.STRING)</span><br><span class="line">@Column(nullable = true)</span><br><span class="line">private UserType type;</span><br></pre></td></tr></table></figure></p>
+<p><strong>不需要和数据库映射的属性</strong></p>
+<p>正常情况下我们在实体类上加入注解<code>@Entity</code>，就会让实体类和表相关连如果其中某个属性我们不需要和数据库来关联只是在展示的时候做计算，只需要加上<code>@Transient</code>属性既可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@Transient</span><br><span class="line">private String  userName;</span><br></pre></td></tr></table></figure></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><hr>
+<p><a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/" target="_blank" rel="noopener">Spring Data JPA - Reference Documentation</a></p>
+<p><a href="https://www.gitbook.com/book/ityouknow/spring-data-jpa-reference-documentation/details" target="_blank" rel="noopener">Spring Data JPA——参考文档 中文版</a></p>
+<hr>
+<p>作者：纯洁的微笑<br>出处：<a href="http://www.ityouknow.com/springboot/2016/08/20/springboot(%E4%BA%94" target="_blank" rel="noopener">http://www.ityouknow.com/</a>-spring-data-jpa%E7%9A%84%E4%BD%BF%E7%94%A8.html)<br>版权所有，欢迎保留原文链接进行转载：)</p>
+</div><div class="tags"><a href="/tags/springboot/">springboot</a></div><div class="post-share"><div class="bdsharebuttonbox"><span style="float:left;line-height: 28px;height: 28px;font-size:16px;font-weight:blod">分享到：</span><a href="#" data-cmd="more" class="bds_more"></a><a href="#" data-cmd="mshare" title="分享到一键分享" class="bds_mshare"></a><a href="#" data-cmd="fbook" title="分享到Facebook" class="bds_fbook"></a><a href="#" data-cmd="twi" title="分享到Twitter" class="bds_twi"></a><a href="#" data-cmd="linkedin" title="分享到linkedin" class="bds_linkedin"></a><a href="#" data-cmd="youdao" title="分享到有道云笔记" class="bds_youdao"></a><a href="#" data-cmd="evernotecn" title="分享到印象笔记" class="bds_evernotecn"></a><a href="#" data-cmd="weixin" title="分享到微信" class="bds_weixin"></a><a href="#" data-cmd="qzone" title="分享到QQ空间" class="bds_qzone"></a><a href="#" data-cmd="tsina" title="分享到新浪微博" class="bds_tsina"></a></div></div><div class="post-nav"><a href="/2018/03/20/180320/" class="pre">关于Java中精确计算的问题</a><a href="/2018/03/09/180309/" class="next">带重复元素以及不带重复元素的全排列</a></div><div id="comments"></div></div></div></div><div class="layout-r"><div id="sidebar"><div class="search-pla"></div><div id="toc" class="widget"><div class="widget-title"><i class="fa fa-fei">文章目录</i></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#spring-data-jpa-介绍"><span class="toc-text">spring data jpa 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#首先了解JPA是什么"><span class="toc-text">首先了解JPA是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#spring-data-jpa"><span class="toc-text">spring data jpa</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本查询"><span class="toc-text">基本查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#预先生成方法"><span class="toc-text">预先生成方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义简单查询"><span class="toc-text">自定义简单查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复杂查询"><span class="toc-text">复杂查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分页查询"><span class="toc-text">分页查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义SQL查询"><span class="toc-text">自定义SQL查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多表查询"><span class="toc-text">多表查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多数据源的支持"><span class="toc-text">##多数据源的支持</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#同源数据库的多元支持"><span class="toc-text">同源数据库的多元支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#异构数据库多源支持"><span class="toc-text">异构数据库多源支持</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-text">其他</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考"><span class="toc-text">参考</span></a></li></ol></div><div class="widget"><div class="widget-title"><i class="fa fa-xie"> 最新文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/04/01/180401/">volatile机制探究</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/20/180320/">关于Java中精确计算的问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/13/180313/">Springboot：Spring Data Jpa的使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/09/180309/">带重复元素以及不带重复元素的全排列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/03/06/180306/">丑数2(Ugly Number Ⅱ)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/11/180211/">Oracle官方文档 —— The try-with-resources Statement</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/08/180208/">静态内部类</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/29/180129/">Lambda表达式和函数式接口</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/25/180125/">学习AOP时的一个问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/01/23/180123/">LinkedHashMap学习笔记</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-gui"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/JAVA基础/">JAVA基础</a><span class="category-list-count">5</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Spring/">Spring</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/并发/">并发</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/算法/">算法</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/诗/">诗</a><span class="category-list-count">1</span></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-biao"> 标签</i></div><div class="tagcloud"><a href="/tags/leetcode/" style="font-size: 15px;">leetcode</a> <a href="/tags/jdk8/" style="font-size: 15px;">jdk8</a> <a href="/tags/静态内部类/" style="font-size: 15px;">静态内部类</a> <a href="/tags/aop/" style="font-size: 15px;">aop</a> <a href="/tags/oracle文档/" style="font-size: 15px;">oracle文档</a> <a href="/tags/LinkedHashMap/" style="font-size: 15px;">LinkedHashMap</a> <a href="/tags/递归/" style="font-size: 15px;">递归</a> <a href="/tags/springboot/" style="font-size: 15px;">springboot</a> <a href="/tags/bigdecimal/" style="font-size: 15px;">bigdecimal</a> <a href="/tags/volatile/" style="font-size: 15px;">volatile</a> <a href="/tags/blog/" style="font-size: 15px;">blog</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-archive"> 归档</i></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">四月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">三月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">一月 2018</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-you"> 友情链接</i></div><ul></ul><a href="http://blog.csdn.net/Armour__r" title="CSDN博客" target="_blank">CSDN博客</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div></div><a id="totop" href="#top"></a><div id="footer"><div class="footer-info"><p><a href="/baidusitemap.xml">Baidu Site Haritası</a> |  <a href="/atom.xml">订阅</a> |  <a href="/about/">关于</a></p><p>本站总访问量：<i id="busuanzi_container_site_pv"><i id="busuanzi_value_site_pv"></i></i>次</p><p><span> Copyright &copy;<a href="/." rel="nofollow">Fake_Armour.</a></span><span> Theme by<a rel="nofollow" target="_blank" href="https://github.com/chaooo/hexo-theme-BlueLake"> BlueLake.</a></span><span> Count by<a href="http://busuanzi.ibruce.info/"> busuanzi.</a></span><span> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a></span></p></div></div></div><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><script type="text/javascript" src="/js/search.json.js?v=2.0.1"></script><script type="text/javascript" src="/js/toctotop.js?v=2.0.1" async></script><script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","weixin","tsina","qzone","linkedin","fbook","twi","print","renren","sqq","evernotecn","bdysc","tqq","tqf","bdxc","kaixin001","tieba","douban","bdhome","thx","ibaidu","meilishuo","mogujie","diandian","huaban","duitang","hx","fx","youdao","sdo","qingbiji","people","xinhua","mail","isohu","yaolan","wealink","ty","iguba","h163","copy"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["tsina","qzone","weixin","fbook","twi","linkedin","youdao","evernotecn","mshare"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["tsina","qzone","weixin","fbook","twi","linkedin","youdao","evernotecn","mshare"]}};with(document)0[(getElementsByTagName('head')[0]||head).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+</script></body></html>
